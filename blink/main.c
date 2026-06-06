@@ -1,8 +1,10 @@
 #include "pico/stdlib.h"
 
-#define LED_DELAY_MS 250
+#include "pins.h"
 
-// Perform initialisation
+#define LED_DELAY_MS 2500
+
+// Perform initialisation.
 int pico_led_init(void) {
   // A device like Pico that uses a GPIO for the LED will define
   // PICO_DEFAULT_LED_PIN so we can use normal GPIO functionality to turn the
