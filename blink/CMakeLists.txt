@@ -40,7 +40,10 @@ add_executable(main
 )
 
 # pull in common dependencies
-target_link_libraries(main pico_stdlib)
+target_link_libraries(main
+  pico_stdlib
+  hardware_spi
+)
 
 if(PICO_CYW43_SUPPORTED)
   target_link_libraries(main pico_cyw43_arch_none)
