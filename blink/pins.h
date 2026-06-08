@@ -1,17 +1,17 @@
 enum {
-  // SPI0.
-  LCM_SCS = 7,
-  LCM_SDO = 6,
-  LCM_SDI = 5,
-  LCM_SCLK = 4,
+  // SPI0 GPIOs.
+  LCM_SCS = 5,
+  LCM_SDO = 4,
+  LCM_SDI = 3,
+  LCM_SCLK = 2,
 
-  // GPIO.
-  BL_CONTROL = 10,
-  LCM_INT = 11,
-  LCM_RESET = 12,
+  // Misc GPIOs.
+  BL_CONTROL = 7,
+  LCM_INT = 8,
+  LCM_RESET = 9,
 
-  // SPI1.
-  LCD_CS = 17,
-  LCD_DIN = 15,
-  LCD_SCLK = 14,
+  // SPI1 GPIOs.
+  LCD_CS = 13,
+  LCD_DIN = 11,
+  LCD_SCLK = 10,
 };
