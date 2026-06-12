@@ -34,9 +34,9 @@ project(main C CXX ASM)
 pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
-
+file(GLOB source "*.c")
 add_executable(main
-  main.c
+  ${source}
 )
 
 # pull in common dependencies
