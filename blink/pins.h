@@ -1,7 +1,7 @@
 // consts don't use kPascalCase as to match with datasheet.
 
 // SPI0 GPIOs, LT7680.
-const uint LCM_SCS = 5,
+const uint LCM_SCS = 5;
 const uint LCM_SDO = 4;
 const uint LCM_SDI = 3;
 const uint LCM_SCLK = 2;
