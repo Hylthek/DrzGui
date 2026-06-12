@@ -1,5 +1,11 @@
 #include "LT7680.h"
 
+#include <stdint.h>
+
+#include "hardware/spi.h"
+#include "pico/stdlib.h"
+#include "pins.h"
+
 void LCM_SpiInit() {
   // Spi0 init, LCM_SCLK idle high, read on rising edge, 8 bit transmission.
   spi_init(spi0, 1e6);
@@ -14,32 +20,30 @@ void LCM_SpiInit() {
   gpio_put(LCM_SCS, 1);
 }
 
-size_t LCM_SpiSendCommand(LCM_CommandByte commmand, size_t data_to_write) {
+uint8_t LCM_SendCommand(LCM_CommandInfo command_info) {
   // The bytes to be sent to LCM.
   // First byte is for command selection (6 bits unused)
   // Second byte is for data writes (unused for read commands).
-  size_t write_frame_16[2] = {0, data_to_write};
+  uint8_t write_frame[2] = {0, command_info.data};
 
   // The bytes read from the LCM.
   // First byte unused.
   // Second byte used during read commands.
-  size_t read_frame_16[2] = {0, 0};
+  uint8_t read_frame[2] = {0, 0};
 
   // Set command selection byte.
-  switch (command) {
+  switch (command_info.command) {
     case kReadStatus:
-      write_frame_16[0] = 0b01000000;
-      data_to_write = 0;  // Don't send unused data.
+      write_frame[0] = 0b01000000;
       break;
     case kSetAddress:
-      write_frame_16[0] = 0b00000000;
+      write_frame[0] = 0b00000000;
       break;
     case kWriteData:
-      write_frame_16[0] = 0b10000000;
+      write_frame[0] = 0b10000000;
       break;
     case kReadData:
-      write_frame_16[0] = 0b11000000;
-      data_to_write = 0;  // Don't send unused data.
+      write_frame[0] = 0b11000000;
       break;
     default:
       panic("Unexpected value.");
@@ -47,11 +51,11 @@ size_t LCM_SpiSendCommand(LCM_CommandByte commmand, size_t data_to_write) {
 
   // Perform SPI transfer.
   gpio_put(LCM_SCS, 0);
-  spi_write_read_blocking(spi0, write_frame_16, read_frame_16, 2);
+  spi_write_read_blocking(spi0, write_frame, read_frame, 2);
   gpio_put(LCM_SCS, 1);
 
-  if (command == kReadStatus || command == kReadData)
-    return read_frame_16[1];
+  if (command_info.command == kReadStatus || command_info.command == kReadData)
+    return read_frame[1];
   else
     return 0x00;
 }

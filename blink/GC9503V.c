@@ -1,5 +1,11 @@
 #include "GC9503V.h"
 
+#include <stdint.h>
+
+#include "hardware/spi.h"
+#include "pico/stdlib.h"
+#include "pins.h"
+
 void LCD_SpiInit() {
   // Spi1 init, LCD_SCLK idle low, read on rising edge, 9 bit transmission.
   // No MISO pin for this interface.
@@ -53,26 +59,27 @@ size_t CommandToParameterNum(LCD_CommandCode command) {
   }
 }
 
-void LCD_SendSpiCommand(LCD_CommandInfo command_info) {
+void LCD_SendCommand(LCD_CommandInfo command_info) {
   // Convert command code to 9bit command data.
   // 9th bit is 0.
   // Using uint16_t for the 9bit block.
   uint16_t command_data = command_info.command_code;
 
   // Verify the num parameters.
-  if (command_info.num_parameters != CommandToParameterNum(command_info.command_code))
+  if (command_info.num_params !=
+      CommandToParameterNum(command_info.command_code))
     panic("Invalid number of parameters for command.");
 
   // Create 9 bit parameter frames.
   // 9th bit is 1.
-  uint16_t parameter_bits[command_info.num_parameters] = {0};
-  for (int i = 0; i < command_info.num_parameters; i++)
-    parameter_bits[i] = 0x100 | parameters[i];
+  uint16_t param_data[kMostParamsUsed] = {0};
+  for (int i = 0; i < command_info.num_params; i++)
+    param_data[i] = 0x100 | param_data[i];
 
   // Perform SPI transmission.
   gpio_put(LCD_CS, 0);
   spi_write16_blocking(spi1, &command_data, 1);
-  if (num_parameters > 0)
-    spi_write16_blocking(spi1, &parameter_bits, num_parameters);
+  if (command_info.num_params > 0)
+    spi_write16_blocking(spi1, param_data, command_info.num_params);
   gpio_put(LCD_CS, 1);
 }

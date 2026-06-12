@@ -1,3 +1,6 @@
+#include <stddef.h>
+#include <stdint.h>
+
 // Spi initialization for the GC9503V Liquid Crystal Display (LCD).
 // Configures 9bit spi transfers.
 void LCD_SpiInit();
@@ -23,11 +26,14 @@ typedef enum {
   kManufactureCommandEnable = 0xF0,
 } LCD_CommandCode;
 
+// The most parameters ever used in a command.
+enum { kMostParamsUsed = 5 };
+
 // Holds the info needed to create a command.
 typedef struct {
   LCD_CommandCode command_code;
-  uint8_t parameters[5];  // 5 is the most parameters used by a single command.
-  size_t num_parameters;
+  uint8_t params[kMostParamsUsed];
+  size_t num_params;
 } LCD_CommandInfo;
 
-void LCD_SendSpiCommand(LCD_CommandInfo command_info);
+void LCD_SendCommand(LCD_CommandInfo command_info);

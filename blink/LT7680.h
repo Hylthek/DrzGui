@@ -1,3 +1,5 @@
+#include <stdint.h>
+
 // SpiBus initialization for the LT7680 Liquid Crystal Module (LCM).
 void LCM_SpiInit();
 
@@ -16,7 +18,12 @@ typedef enum {
   kReadData,
 } LCM_Command;
 
+typedef struct {
+  LCM_Command command;
+  uint8_t data;
+} LCM_CommandInfo;
+
 // Make a SPIBUS command to the LT7680(LCM).
 // Second byte is unused for read commands.
 // Return value unused for write commands.
-size_t LCM_SpiSendCommand(LCM_Command commmand, size_t data_to_write);
+uint8_t LCM_SendCommand(LCM_CommandInfo command_info);
