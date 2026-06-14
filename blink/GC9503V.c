@@ -5,11 +5,13 @@
 #include "hardware/spi.h"
 #include "pico/stdlib.h"
 
+#define LCM_spi_channel spi1
+
 void LCD_SpiInit() {
   // Spi1 init, LCD_SCLK idle low, read on rising edge, 9 bit transmission.
   // No MISO pin for this interface.
-  spi_init(spi1, 1e5);
-  spi_set_format(spi1, 9, SPI_CPOL_1, SPI_CPHA_0, SPI_MSB_FIRST);
+  spi_init(LCM_spi_channel, 1e5);
+  spi_set_format(LCM_spi_channel, 9, SPI_CPOL_1, SPI_CPHA_0, SPI_MSB_FIRST);
   gpio_set_function(LCD_DIN, GPIO_FUNC_SPI);
   gpio_set_function(LCD_SCLK, GPIO_FUNC_SPI);
 
@@ -73,12 +75,12 @@ void LCD_SendCommand(LCD_CommandInfo command_info) {
   // 9th bit is 1.
   uint16_t param_data[kMostParamsUsed] = {0};
   for (int i = 0; i < command_info.num_params; i++)
-    param_data[i] = 0x100 | param_data[i];
+    param_data[i] = 0x100 | command_info.params[i];
 
   // Perform SPI transmission.
   gpio_put(LCD_CS, 0);
-  spi_write16_blocking(spi1, &command_data, 1);
+  spi_write16_blocking(LCM_spi_channel, &command_data, 1);
   if (command_info.num_params > 0)
-    spi_write16_blocking(spi1, param_data, command_info.num_params);
+    spi_write16_blocking(LCM_spi_channel, param_data, command_info.num_params);
   gpio_put(LCD_CS, 1);
 }

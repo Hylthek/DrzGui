@@ -1,14 +1,17 @@
 #include "LT7680.h"
 
 #include <stdint.h>
+#include <stdio.h>
 
 #include "hardware/spi.h"
 #include "pico/stdlib.h"
 
+#define LCM_spi_channel spi0
+
 void LCM_SpiInit() {
   // Spi0 init, LCM_SCLK idle high, read on rising edge, 8 bit transmission.
-  spi_init(spi0, 1e5);
-  spi_set_format(spi0, 8, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);
+  spi_init(LCM_spi_channel, 1e5);
+  spi_set_format(LCM_spi_channel, 8, SPI_CPOL_1, SPI_CPHA_1, SPI_MSB_FIRST);
   gpio_set_function(LCM_SDO, GPIO_FUNC_SPI);
   gpio_set_function(LCM_SDI, GPIO_FUNC_SPI);
   gpio_set_function(LCM_SCLK, GPIO_FUNC_SPI);
@@ -50,8 +53,11 @@ uint8_t LCM_SendCommand(LCM_Command command, uint8_t data) {
 
   // Perform SPI transfer.
   gpio_put(LCM_SCS, 0);
-  spi_write_read_blocking(spi0, write_frame, read_frame, 2);
+  spi_write_read_blocking(LCM_spi_channel, write_frame, read_frame, 2);
   gpio_put(LCM_SCS, 1);
+
+  printf("write_frame: [0x%02x, 0x%02x]\n", write_frame[0], write_frame[1]);
+  printf("read_frame: [0x%02x, 0x%02x]\n", read_frame[0], read_frame[1]);
 
   if (command == kReadStatus || command == kReadData)
     return read_frame[1];
