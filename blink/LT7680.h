@@ -18,12 +18,7 @@ typedef enum {
   kReadData,
 } LCM_Command;
 
-typedef struct {
-  LCM_Command command;
-  uint8_t data;
-} LCM_CommandInfo;
-
 // Make a SPIBUS command to the LT7680(LCM).
 // Second byte is unused for read commands.
 // Return value unused for write commands.
-uint8_t LCM_SendCommand(LCM_CommandInfo command_info);
+uint8_t LCM_SendCommand(LCM_Command command, uint8_t data);

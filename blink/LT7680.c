@@ -20,11 +20,11 @@ void LCM_SpiInit() {
   gpio_put(LCM_SCS, 1);
 }
 
-uint8_t LCM_SendCommand(LCM_CommandInfo command_info) {
+uint8_t LCM_SendCommand(LCM_Command command, uint8_t data) {
   // The bytes to be sent to LCM.
   // First byte is for command selection (6 bits unused)
   // Second byte is for data writes (unused for read commands).
-  uint8_t write_frame[2] = {0, command_info.data};
+  uint8_t write_frame[2] = {0, data};
 
   // The bytes read from the LCM.
   // First byte unused.
@@ -32,7 +32,7 @@ uint8_t LCM_SendCommand(LCM_CommandInfo command_info) {
   uint8_t read_frame[2] = {0, 0};
 
   // Set command selection byte.
-  switch (command_info.command) {
+  switch (command) {
     case kReadStatus:
       write_frame[0] = 0b01000000;
       break;
@@ -54,7 +54,7 @@ uint8_t LCM_SendCommand(LCM_CommandInfo command_info) {
   spi_write_read_blocking(spi0, write_frame, read_frame, 2);
   gpio_put(LCM_SCS, 1);
 
-  if (command_info.command == kReadStatus || command_info.command == kReadData)
+  if (command == kReadStatus || command == kReadData)
     return read_frame[1];
   else
     return 0x00;
