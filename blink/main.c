@@ -5,6 +5,14 @@
 #include "LT7680.h"
 #include "pico/stdlib.h"
 
+// Misc GPIOs.
+enum {
+  BL_CONTROL = 7,
+  LCM_INT = 8,
+  LCM_RESET = 9,
+};
+
+
 int main() {
   stdio_init_all();
   printf("Program Start\n");
