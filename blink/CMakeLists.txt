@@ -54,6 +54,6 @@ pico_add_extra_outputs(main)
 
 # add url via pico_set_program_url
 
-# Enable USB stdout and disable UART stdout.
-pico_enable_stdio_usb(main 1)
-pico_enable_stdio_uart(main 0)
+# Disable USB stdout and enable UART stdout.
+pico_enable_stdio_usb(main 0)
+pico_enable_stdio_uart(main 1)
