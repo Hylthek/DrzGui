@@ -7,7 +7,7 @@
 
 void LCM_SpiInit() {
   // Spi0 init, LCM_SCLK idle high, read on rising edge, 8 bit transmission.
-  spi_init(spi0, 1e6);
+  spi_init(spi0, 1e5);
   spi_set_format(spi0, 8, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);
   gpio_set_function(LCM_SDO, GPIO_FUNC_SPI);
   gpio_set_function(LCM_SDI, GPIO_FUNC_SPI);
