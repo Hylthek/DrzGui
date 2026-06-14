@@ -4,7 +4,6 @@
 
 #include "hardware/spi.h"
 #include "pico/stdlib.h"
-#include "pins.h"
 
 void LCM_SpiInit() {
   // Spi0 init, LCM_SCLK idle high, read on rising edge, 8 bit transmission.

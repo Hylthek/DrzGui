@@ -1,5 +1,13 @@
 #include <stdint.h>
 
+// SPI0 GPIOs, LT7680.
+enum {
+  LCM_SCS = 5,
+  LCM_SDO = 4,
+  LCM_SDI = 3,
+  LCM_SCLK = 2,
+};
+
 // SpiBus initialization for the LT7680 Liquid Crystal Module (LCM).
 void LCM_SpiInit();
 

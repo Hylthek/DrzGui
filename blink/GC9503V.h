@@ -1,6 +1,13 @@
 #include <stddef.h>
 #include <stdint.h>
 
+// SPI1 GPIOs, GC9503V.
+enum {
+  LCD_CS = 13,
+  LCD_DIN = 11,
+  LCD_SCLK = 10,
+};
+
 // Spi initialization for the GC9503V Liquid Crystal Display (LCD).
 // Configures 9bit spi transfers.
 void LCD_SpiInit();

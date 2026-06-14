@@ -4,7 +4,6 @@
 
 #include "hardware/spi.h"
 #include "pico/stdlib.h"
-#include "pins.h"
 
 void LCD_SpiInit() {
   // Spi1 init, LCD_SCLK idle low, read on rising edge, 9 bit transmission.
