@@ -13,6 +13,12 @@ enum {
 };
 
 void Blink(float duration, float freq) {
+  static bool led_pin_initialized = false;
+  if (led_pin_initialized == false) {
+    gpio_init(PICO_DEFAULT_LED_PIN);
+    gpio_set_dir(PICO_DEFAULT_LED_PIN, GPIO_OUT);
+    led_pin_initialized = true;
+  }
   for (int i = 0; i < duration * freq; i++) {
     gpio_put(PICO_DEFAULT_LED_PIN, 1);
     sleep_ms(1000 / (2 * freq));
@@ -22,47 +28,36 @@ void Blink(float duration, float freq) {
 }
 
 int main() {
-  // Set BL_CONTROL gpio to 1.
+  // Turn on backlight.
   gpio_init(BL_CONTROL);
   gpio_set_dir(BL_CONTROL, GPIO_OUT);
   gpio_put(BL_CONTROL, 1);
 
+  // Init printf.
   stdio_init_all();
-  printf("Program Start\n");
 
-  // Init LED gpio and perform startup blinking.
+  // Perform fast blinking.
+  printf("Starting Program...\n");
   gpio_init(PICO_DEFAULT_LED_PIN);
   gpio_set_dir(PICO_DEFAULT_LED_PIN, GPIO_OUT);
   Blink(3.0, 10.0);
-  printf("Starting Program...\n");
 
-
-  // Spi inits.
+  // Init LCM and LCD spibuses.
   printf("Initializing Spibus...\n");
   LCM_SpiInit();
   LCD_SpiInit();
 
-  // LCM commands.
+  // LCM: Send commands.
   printf("Sending LCM Command...\n");
   uint8_t status = LCM_SendCommand(kReadStatus, 0);
-  printf("LCM Status: %d\n", status);
+  printf("LCM Status Reg: %d\n", status);
 
-  // LCD commands.
+  // LCD: Send commands.
   printf("Sending LCD Commands...\n");
-  LCD_CommandInfo sleep_out_command = {
-      .command_code = kSleepOutBoosterOn,
-      .params = {0},
-      .num_params = 0,
-  };
-  LCD_CommandInfo display_on_command = {
-      .command_code = kDisplayOn,
-      .params = {0},
-      .num_params = 0,
-  };
-  LCD_SendCommand(sleep_out_command);
-  LCD_SendCommand(display_on_command);
+  LCD_SendCommand(kSleepOutBoosterOn, NULL, 0);
+  LCD_SendCommand(kDisplayOn, NULL, 0);
 
-  // Blink.
+  // Blink slowly forever.
   while (true) {
     printf("Blinking...\n");
     Blink(1.0, 2.0);
