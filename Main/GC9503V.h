@@ -31,16 +31,6 @@ typedef enum {
   kDisplayCtl = 0xB1,
   kOtpCtl = 0xF6,
   kManufactureCommandEnable = 0xF0,
-} LCD_CommandCode;
+} LCD_CommandByte;
 
-// The most parameters ever used in a command.
-enum { kMostParamsUsed = 5 };
-
-// Holds the info needed to create a command.
-typedef struct {
-  LCD_CommandCode command_code;
-  uint8_t params[kMostParamsUsed];
-  size_t num_params;
-} LCD_CommandInfo;
-
-void LCD_SendCommand(LCD_CommandInfo command_info);
+void LCD_SendCommand(LCD_CommandByte command_code, uint8_t* params, unsigned int num_params);

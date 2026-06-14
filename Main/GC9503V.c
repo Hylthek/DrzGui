@@ -21,7 +21,7 @@ void LCD_SpiInit() {
   gpio_put(LCD_CS, 1);
 }
 
-size_t CommandToParameterNum(LCD_CommandCode command) {
+size_t CommandToParameterNum(LCD_CommandByte command) {
   switch (command) {
     case kSleepInBoosterOff:
     case kSleepOutBoosterOn:
@@ -60,27 +60,26 @@ size_t CommandToParameterNum(LCD_CommandCode command) {
   }
 }
 
-void LCD_SendCommand(LCD_CommandInfo command_info) {
+void LCD_SendCommand(LCD_CommandByte command_byte, uint8_t* params,
+                     uint num_params) {
   // Convert command code to 9bit command data.
   // 9th bit is 0.
   // Using uint16_t for the 9bit block.
-  uint16_t command_data = command_info.command_code;
+  uint16_t command_9bit = command_byte;
 
   // Verify the num parameters.
-  if (command_info.num_params !=
-      CommandToParameterNum(command_info.command_code))
-    panic("Invalid number of parameters for command.");
+  if (num_params > CommandToParameterNum(command_byte))
+    panic("Too many parameters for command.");
 
   // Create 9 bit parameter frames.
   // 9th bit is 1.
-  uint16_t param_data[kMostParamsUsed] = {0};
-  for (int i = 0; i < command_info.num_params; i++)
-    param_data[i] = 0x100 | command_info.params[i];
+  uint16_t params_9bit[255] = {0};
+  for (int i = 0; i < num_params; i++) params_9bit[i] = 0x100 | params[i];
 
   // Perform SPI transmission.
   gpio_put(LCD_CS, 0);
-  spi_write16_blocking(LCM_spi_channel, &command_data, 1);
-  if (command_info.num_params > 0)
-    spi_write16_blocking(LCM_spi_channel, param_data, command_info.num_params);
+  spi_write16_blocking(LCM_spi_channel, &command_9bit, 1);
+  if (num_params > 0)
+    spi_write16_blocking(LCM_spi_channel, params_9bit, num_params);
   gpio_put(LCD_CS, 1);
 }
