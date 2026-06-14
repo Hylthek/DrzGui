@@ -11,7 +11,7 @@ void LCD_SpiInit() {
   // Spi1 init, LCD_SCLK idle low, read on rising edge, 9 bit transmission.
   // No MISO pin for this interface.
   spi_init(LCM_spi_channel, 1e5);
-  spi_set_format(LCM_spi_channel, 9, SPI_CPOL_1, SPI_CPHA_0, SPI_MSB_FIRST);
+  spi_set_format(LCM_spi_channel, 9, SPI_CPOL_1, SPI_CPHA_1, SPI_MSB_FIRST);
   gpio_set_function(LCD_DIN, GPIO_FUNC_SPI);
   gpio_set_function(LCD_SCLK, GPIO_FUNC_SPI);
 
